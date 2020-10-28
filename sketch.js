@@ -7,11 +7,11 @@ var engine, world;
 var box1, pig1,pig3;
 var backgroundImg,platform;
 var bird, slingshot;
-
+var score=0;
 var gameState = "onSling";
 
 function preload() {
-    backgroundImg = loadImage("sprites/bg.png");
+   getBackground();
 }
 
 function setup(){
@@ -42,21 +42,29 @@ function setup(){
 
     //log6 = new Log(230,180,80, PI/2);
     slingshot = new SlingShot(bird.body,{x:200, y:50});
+
+    //getTime();
 }
 
 function draw(){
+    if(backgroundImg) {
     background(backgroundImg);
+    }
     Engine.update(engine);
-    //strokeWeight(4);
+    fill("white");
+    textSize(35);
+    text("Score:"+ score, width-300, 50)
     box1.display();
     box2.display();
     ground.display();
     pig1.display();
+    pig1.Score();
     log1.display();
 
     box3.display();
     box4.display();
     pig3.display();
+    pig3.Score();
     log3.display();
 
     box5.display();
@@ -78,7 +86,7 @@ function mouseDragged(){
 
 function mouseReleased(){
     slingshot.fly();
-    gameState = "launched";
+    //gameState = "launched";
 }
 
 function keyPressed(){
@@ -86,3 +94,41 @@ function keyPressed(){
        // slingshot.attach(bird.body);
     }
 }
+
+async function getBackground(){
+    var response = await fetch("http://worldtimeapi.org/api/timezone/America/Los_Angeles");
+    var responseJSON = await response.json();     //Extracts the data in JSON
+    console.log(responseJSON);
+
+    var dt = responseJSON.datetime;
+    console.log(dt);
+
+    var hour = dt.slice(11, 13);
+    console.log(hour);
+    if(hour>=06 && hour<=19) {
+        backgroundImg = loadImage("sprites/bg.png");
+    }
+    else{
+        backgroundImg = loadImage("sprites/bg2.jpg");
+    }
+}
+
+/*
+API - Application Program Interface
+API call - To Request for information to a web server
+
+"promise" of information
+
+fetch():
+    - Sends a request to the API service
+    - Collects the response from the API service
+
+JS - SYNCHRONOUS ==> One line after the other, without waiting
+    - ASYNCHRONOUS ==> Waits for some statements to be completed before moving to the next
+
+JSON - JS Object Notation - DATA STRUCTURE
+    - created inside {}
+    - Elements separated by a comma
+    - Contains different or same data types
+    - {Index_name: Index_value, ....}
+*/
